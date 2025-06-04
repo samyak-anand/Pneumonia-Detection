@@ -106,7 +106,7 @@ os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/YourUsername/.kaggle'
 !kaggle competitions download -c rsna-pneumonia-detection-challenge
 !unzip rsna-pneumonia-detection-challenge.zip -d data/
 
-
+```
 
 .
 ├── data/                           # Dataset files
@@ -122,3 +122,11 @@ os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/YourUsername/.kaggle'
 ├── requirements.txt
 └── .kaggle/kaggle.json             # Kaggle API key (not shared)
 
+
+Refrences:
+Rui P, Kang K. National Ambulatory Medical Care Survey: 2015 Emergency Department Summary Tables. CDC Link
+Deaths: Final Data for 2015. National Vital Statistics Reports. CDC
+Franquet T. Imaging of community-acquired pneumonia. J Thorac Imaging. 2018. PMID: 30036297
+Kelly B. The Chest Radiograph. Ulster Med J 2012;81(3):143-148
+Wang X. et al. ChestX-ray8: Hospital-scale Chest X-ray Database and Benchmarks. CVPR 2017. PDF
+Kaggle RSNA Challenge Overview. hello@reallygreatsite.com - www.reallygreatsite.com
