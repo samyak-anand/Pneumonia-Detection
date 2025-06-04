@@ -1,7 +1,7 @@
 # 🩺 Pneumonia Detection in Chest X-rays using Deep Learning  
 *A solution to the RSNA Pneumonia Detection Challenge*
 
-![RSNA Banner](https://www.rsna.org/-/media/Images/RSNA/Miscellaneous/Logos/RSNA_Logo_Blue.png)
+![RSNA Banner](http://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2016/05/18/13/02/ww5r032t-8col-jpg.jpg)
 
 ---
 
