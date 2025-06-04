@@ -107,7 +107,7 @@ os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/YourUsername/.kaggle'
 !unzip rsna-pneumonia-detection-challenge.zip -d data/
 
 ```
-
+```bash
 .
 ├── data/                           # Dataset files
 ├── src/
@@ -121,7 +121,7 @@ os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/YourUsername/.kaggle'
 ├── README.md
 ├── requirements.txt
 └── .kaggle/kaggle.json             # Kaggle API key (not shared)
-
+```
 
 Refrences:
 Rui P, Kang K. National Ambulatory Medical Care Survey: 2015 Emergency Department Summary Tables. CDC Link
