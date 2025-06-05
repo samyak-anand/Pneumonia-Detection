@@ -21,6 +21,8 @@ from PIL import Image         # For resizing/saving images
 # Display tools
 from IPython.display import HTML, display  # For HTML rendering in notebooks
 import os  # For interacting with the file system
+# ============================================================================
+
 
 # --- Function to Get All DICOM File Paths in a Directory ---
 def get_dicom_paths(directory_path, label=""):
@@ -43,6 +45,8 @@ def get_dicom_paths(directory_path, label=""):
     display(HTML(f"<strong>Number of images present in the {label} directory is {len(dicom_paths)}</strong>"))
     return dicom_paths
 
+#==========================================================================
+
 # --- Define Image Directories ---
 TRAIN_IMG_DIR = r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_train_images"
 TEST_IMG_DIR  = r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_test_images"
@@ -50,9 +54,25 @@ TEST_IMG_DIR  = r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data
 train_img_path = get_dicom_paths(TRAIN_IMG_DIR, label="train")
 test_img_path  = get_dicom_paths(TEST_IMG_DIR, label="test")
 
+"""
+        Dislaying the number  of iages present in the folder
+
+"""
+print('\n Number of images present in the train directory is:',len(train_img_path))
+print('\n Number of images present in the test directory is:',len(test_img_path))
+
 # --- Load CSV Metadata ---
 df_detail_class = pd.read_csv(r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_detailed_class_info.csv")
 df_label = pd.read_csv(r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_train_labels.csv")
+
+
+"""
+        Dislaying the head of dataset
+"""
+print('\n The detail class dataframe:\n ', df_detail_class.head())
+print('\n The lable dataframe :\n', df_label)
+
+#======================================================================================
 
 # --- Function to Display DICOM Samples ---
 def display_dicom_samples(image_paths, num_samples=5, title="DICOM Samples"):
@@ -80,6 +100,17 @@ def display_dicom_samples(image_paths, num_samples=5, title="DICOM Samples"):
         except Exception as e:
             print(f"Error reading {img_path}: {e}")
 
+
+
+# Display first 5 training images
+display_dicom_samples(train_img_path, num_samples=1, title="Train Image")
+
+# Display first 5 test images
+display_dicom_samples(test_img_path, num_samples=1, title="Test Image")
+
+#=========================================================================================
+
+
 # --- Function for General DataFrame Overview ---
 def df_overview(df):
     """
@@ -103,23 +134,12 @@ def df_overview(df):
     print("Unique value counts:\n", df.nunique())
     print('\n=========================================')
 
-# --- Function to Clean Patient Info by Removing Duplicates ---
-def clean_patient_info(patient_info_list, dedup_column='patientId'):
-    """
-    Converts list of patient dictionaries to DataFrame and removes duplicates.
+#passing the first dataset 
+df_overview(df_label)
+#passing the second dataset
+df_overview(df_detail_class)
 
-    Parameters:
-    - patient_info_list (list): List of patient info dictionaries
-    - dedup_column (str or list): Column(s) to check for duplicates
-
-    Returns:
-    - Cleaned DataFrame
-    """
-    df = pd.DataFrame(patient_info_list)
-    df = df.drop_duplicates(subset=dedup_column, keep='first')  # Remove by ID
-    df = df.drop_duplicates()  # Remove full row duplicates
-    df.reset_index(drop=True, inplace=True)
-    return df
+#=================================================================================
 
 # --- Function to Describe Numeric and Categorical Features ---
 def df_describe(df):
@@ -139,6 +159,50 @@ def df_describe(df):
 
     print('\n=============================================')
 
+
+#passing the first dataset 
+df_describe(df_label)
+#passing the second dataset
+df_describe(df_detail_class)
+
+# =======================================================================================
+
+def df_clean(data_list, dedup_column=None):
+    """
+    Convert a list of dictionaries to a DataFrame and remove duplicates.
+
+    Parameters:
+    - data_list (list): List of dictionaries representing data records.
+    - dedup_column (str or list, optional): Column(s) to use for identifying duplicates.
+      If None, duplicates are removed based on all columns.
+
+    Returns:
+    - pd.DataFrame: Cleaned DataFrame with duplicates removed.
+    """
+    # Convert list of dicts to DataFrame
+    df = pd.DataFrame(data_list)
+    
+    if dedup_column:
+        # Remove duplicates based on specified column(s), keep first occurrence
+        df = df.drop_duplicates(subset=dedup_column, keep='first')
+    
+    # Remove any remaining duplicate rows (based on all columns)
+    df = df.drop_duplicates()
+    
+    # Reset index for clean DataFrame
+    df.reset_index(drop=True, inplace=True)
+    print('\n The dataset has been clean')
+    return df
+
+df_detail_class_clean= df_clean(df_detail_class)
+df_lable_clean= df_clean(df_label)
+#passing the first dataset 
+print('\n The missing data in Frist dataset \n ',df_detail_class_clean.head())
+#passing the second dataset
+print('\n The missing data in Frist dataset \n ',df_lable_clean.head())
+
+# =======================================================================================
+
 # --- Function to Summarize Missing Data ---
 def missing_data(df):
     """
@@ -155,6 +219,13 @@ def missing_data(df):
     missing_df = pd.concat([total, percent], axis=1, keys=['Total', 'Percent'])
     return missing_df
 
+
+#passing the first dataset 
+print('\n The missing data in Frist dataset \n',missing_data(df_lable_clean))
+#passing the second dataset
+print('\n The missing data in Second dataset \n',missing_data(df_detail_class_clean))
+
+# =======================================================================================
 # --- Function to View Distribution of a Feature ---
 def get_feature_distribution(data, feature):
     """
@@ -168,6 +239,20 @@ def get_feature_distribution(data, feature):
         count = label_counts.values[i]
         percent = int((count / total_samples) * 10000) / 100
         print("{:<30s}:   {} , {}%".format(label, count, percent))
+
+# ========================================================================================
+
+print("\n Print the vlaue count of different classes in dataset:\n",df_detail_class_clean['class'].value_counts())
+print("\n Print the vlaue count of different Target classes in dataset:\n",df_lable_clean['Target'].value_counts())
+# =======================================================================================
+
+print('\n merge the dataset')
+pnemonia= pd.merge(df_label,df_detail_class, on='patientId', how='inner')
+print('\n The Cobined dataset is:\n',pnemonia.head())
+
+# =======================================================================================
+
+
 
 # --- Function to Read DICOM Files into Datasets ---
 def read_dicom_files(file_paths):
@@ -189,6 +274,7 @@ def read_dicom_files(file_paths):
             print(f"Error reading {path}: {e}")
     return dicom_data_list
 
+# =======================================================================================
 # --- Function to Extract Patient Metadata from DICOM ---
 def extract_patient_info(datasets):
     """
@@ -227,3 +313,6 @@ def extract_patient_info(datasets):
         patient_info_list.append(patient_info)
 
     return patient_info_list
+
+
+# =======================================================================================
