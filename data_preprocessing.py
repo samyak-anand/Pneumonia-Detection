@@ -50,9 +50,23 @@ TEST_IMG_DIR  = r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data
 train_img_path = get_dicom_paths(TRAIN_IMG_DIR, label="train")
 test_img_path  = get_dicom_paths(TEST_IMG_DIR, label="test")
 
+"""
+        Dislaying the number  of iages present in the folder
+
+"""
+print('\n Number of images present in the train directory is:',len(train_img_path))
+print('\n Number of images present in the test directory is:',len(test_img_path))
+
 # --- Load CSV Metadata ---
 df_detail_class = pd.read_csv(r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_detailed_class_info.csv")
 df_label = pd.read_csv(r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_train_labels.csv")
+
+
+"""
+        Dislaying the head of dataset
+"""
+print('\n The detail class dataframe:\n ', df_detail_class.head())
+print('\n The lable dataframe :\n', df_label)
 
 # --- Function to Display DICOM Samples ---
 def display_dicom_samples(image_paths, num_samples=5, title="DICOM Samples"):
