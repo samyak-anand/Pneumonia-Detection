@@ -329,5 +329,5 @@ def extract_patient_info(datasets):
 
 patient_info_table=extract_patient_info(combined_series_dicom_datasets)
 patient_info_table=pd.DataFrame(patient_info_table)
-print("\n The patient table ",patient_info_table)
+print("\n The patient table ",patient_info_table.head())
 # =======================================================================================
