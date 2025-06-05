@@ -274,6 +274,19 @@ def read_dicom_files(file_paths):
             print(f"Error reading {path}: {e}")
     return dicom_data_list
 
+# Convert to pandas Series
+train_series = pd.Series(train_img_path)
+test_series = pd.Series(test_img_path)
+
+# Concatenate using pandas
+combined_series = pd.concat([train_series, test_series], ignore_index=True)
+
+
+print("Combined paths saved to combined_dicom_paths.csv")
+
+# Read DICOM datasets into memory 
+combined_series_dicom_datasets = read_dicom_files(combined_series)
+print("\n The sample metadata:\n", combined_series_dicom_datasets[1])
 # =======================================================================================
 # --- Function to Extract Patient Metadata from DICOM ---
 def extract_patient_info(datasets):
@@ -314,5 +327,7 @@ def extract_patient_info(datasets):
 
     return patient_info_list
 
-
+patient_info_table=extract_patient_info(combined_series_dicom_datasets)
+patient_info_table=pd.DataFrame(patient_info_table)
+print("\n The patient table ",patient_info_table)
 # =======================================================================================
