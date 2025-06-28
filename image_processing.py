@@ -102,10 +102,8 @@ def create_segmentation_mask(img_id, boxes_df, orig_size=(1024, 1024), new_size=
         mask[y1:y2, x1:x2] = 1
 
     return mask
-bbox_df = pd.read_csv(
-    r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_train_labels.csv"
-)
-bbox_df = bbox_df[bbox_df['Target'] == 1].copy()
+bbox_df = pd.read_csv(r"C:\Users\samya\PyCharmProject\Pneumonia-Detection_dataset\data\stage_2_train_labels.csv")
+#bbox_df = bbox_df[bbox_df['Target'] == 1].copy()
 
 train_masks = []
 
