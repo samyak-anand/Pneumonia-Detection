@@ -1,10 +1,26 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import pydicom  # Make sure this is installed: pip install pydicom
+import pydicom
 from tensorflow.keras.models import load_model
-from tensorflow.keras.applications.imagenet_utils import preprocess_input
+from tensorflow.keras.applications.mobilenet import preprocess_input as mobilenet_preprocess
+from tensorflow.keras.applications.resnet50 import preprocess_input as resnet_preprocess
 
+# Default preprocessor
+def default_preprocess(x):
+    return x / 255.0
+
+# Preprocessing function map
+MODEL_PREPROCESSORS = {
+    "FCNN": default_preprocess,
+    "Custom CNN": default_preprocess,
+    "MobileNet": mobilenet_preprocess,
+    "U-Net": default_preprocess,
+    "ResNet U-Net": resnet_preprocess,
+    "MobileNet U-Net": mobilenet_preprocess
+}
+
+# Model loader
 @st.cache_resource
 def load_cnn_model(model_name):
     model_paths = {
@@ -12,8 +28,8 @@ def load_cnn_model(model_name):
         "Custom CNN": "models/custom_cnn.keras",
         "MobileNet": "models/mobilenet_model.keras",
         "U-Net": "models/unet_model.keras",
-        "ResNet U-Net": "models/resnet_unet_model.keras",
-        "MobileNet U-Net": "models/mobilenet_unet_model.keras"
+        "ResNet U-Net": r"C:\Users\samya\PyCharmProject\Pneumonia-Detection\Jupyter_file\app\models\resnet50_unet_best.keras",
+        "MobileNet U-Net": r"C:\Users\samya\PyCharmProject\Pneumonia-Detection\Jupyter_file\app\models\mobilenet_unet_best.keras"
     }
 
     if model_name not in model_paths:
@@ -33,6 +49,7 @@ def run_model_predictions():
 
     if uploaded_file:
         try:
+            # Load and display image
             if uploaded_file.name.lower().endswith(".dcm"):
                 ds = pydicom.dcmread(uploaded_file)
                 image_array = ds.pixel_array
@@ -42,14 +59,18 @@ def run_model_predictions():
 
             st.image(image, caption="Uploaded Image", use_column_width=True)
 
-            # Preprocess image
-            img_resized = image.resize((224, 224))
-            img_array = np.array(img_resized, dtype=np.float32)
-            img_array = preprocess_input(img_array)
-            img_batch = np.expand_dims(img_array, axis=0)
-
-            # Load model
+            # Load model and determine input shape
             model = load_cnn_model(model_name)
+            model_input_shape = model.input_shape[1:3]
+
+            # Resize image
+            image_resized = image.resize(model_input_shape)
+            img_array = np.array(image_resized).astype(np.float32)
+
+            # Preprocess based on model
+            preprocessor = MODEL_PREPROCESSORS[model_name]
+            img_array = preprocessor(img_array)  # Safe now that it's float32
+            img_batch = np.expand_dims(img_array, axis=0)
 
             # Predict
             prediction = model.predict(img_batch)
